@@ -36,7 +36,7 @@ from .theme import (
 __all__ = [
     "ColorTuple", "RoundedButton", "GrayRoundedButton", "FixedRoundedButton",
     "TallRoundedButton", "FixedGrayRoundedButton", "SmallRoundedButton",
-    "BackButton", "LinkButton", "CrownBadge", "SelectableButton",
+    "BackButton", "LinkButton", "CompletionBadge", "CrownBadge", "SelectableButton",
     "SelectableButtonGroup", "IconButton", "disable_widget",
 ]
 
@@ -109,18 +109,19 @@ def LinkButton(text: str, **kwargs: Any) -> Button:
     return styled(Button, "link_btn", text=text, **kwargs)
 
 
-class CrownBadge:
+class CompletionBadge:
     """A tilted badge icon drawn on a button's canvas.before (menu completion mark).
 
-    Icon and color come from the theme (`badge_icon`, `badge_on_time`)."""
+    Icon and color come from the theme (`badge_icon`, `badge_on_time`). yaque uses
+    a gold crown; yawop can point `badge_icon` at a stylized 'W'."""
 
     _texture: Any = None
 
     def __init__(self, btn: RoundedButton, visible: bool = False) -> None:
         self.btn = btn
         self.visible = visible
-        if CrownBadge._texture is None:
-            CrownBadge._texture = CoreImage(get_theme().badge_icon).texture
+        if CompletionBadge._texture is None:
+            CompletionBadge._texture = CoreImage(get_theme().badge_icon).texture
         btn.bind(pos=self._draw, size=self._draw, state=self._draw)
 
     def show(self) -> None:
@@ -143,8 +144,12 @@ class CrownBadge:
             iy = btn.top - icon_size - dp(2)
             PushMatrix()
             Rotate(angle=-20, origin=(ix + icon_size / 2, iy + icon_size / 2))
-            Rectangle(texture=CrownBadge._texture, pos=(ix, iy), size=(icon_size, icon_size))
+            Rectangle(texture=CompletionBadge._texture, pos=(ix, iy), size=(icon_size, icon_size))
             PopMatrix()
+
+
+# Back-compat alias (yaque calls it CrownBadge).
+CrownBadge = CompletionBadge
 
 
 class SelectableButton(RoundedButton):

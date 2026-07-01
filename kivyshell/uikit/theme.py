@@ -21,9 +21,11 @@ RADIUS = {"sm": 8, "md": 12}
 BUTTON_HEIGHT = {"sm": 40, "md": 48, "lg": 58}
 ROW_HEIGHT = 36
 CELL_HEIGHT = 52
+STAT_ROW_HEIGHT = 24
 ICON_BTN_SIZE = 40
 ICON_LABEL_HEIGHT = 12
 ICON_LABEL_TOTAL = 14  # icon label height + padding
+POPUP_WIDTH = 0.85     # default popup size_hint_x
 
 
 @dataclass(frozen=True)

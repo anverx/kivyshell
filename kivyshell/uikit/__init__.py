@@ -3,6 +3,7 @@
 from .buttons import (
     BackButton,
     ColorTuple,
+    CompletionBadge,
     CrownBadge,
     FixedGrayRoundedButton,
     FixedRoundedButton,
@@ -15,6 +16,19 @@ from .buttons import (
     SmallRoundedButton,
     TallRoundedButton,
     disable_widget,
+)
+from .layouts import (
+    ButtonRow,
+    CompletionIcon,
+    CrownIcon,
+    DateSeparator,
+    PanelLayout,
+    Popup,
+    PopupContent,
+    SizeButtonRow,
+    StatRow,
+    TypeIcon,
+    styled_layout,
 )
 from .labels import (
     AboutSubtitleLabel,
@@ -52,8 +66,12 @@ __all__ = [
     "Theme", "DEFAULT_THEME", "set_theme", "get_theme", "get_styles", "build_styles", "register_styles",
     # buttons
     "ColorTuple", "RoundedButton", "GrayRoundedButton", "FixedRoundedButton", "TallRoundedButton",
-    "FixedGrayRoundedButton", "SmallRoundedButton", "BackButton", "LinkButton", "CrownBadge",
-    "SelectableButton", "SelectableButtonGroup", "IconButton", "disable_widget",
+    "FixedGrayRoundedButton", "SmallRoundedButton", "BackButton", "LinkButton",
+    "CompletionBadge", "CrownBadge", "SelectableButton", "SelectableButtonGroup",
+    "IconButton", "disable_widget",
+    # layouts
+    "PopupContent", "styled_layout", "ButtonRow", "SizeButtonRow", "PanelLayout", "StatRow",
+    "DateSeparator", "Popup", "TypeIcon", "CompletionIcon", "CrownIcon",
     # labels + factory
     "styled", "styled_label", "StyledLabel",
     "TitleLgLabel", "TitleMdLabel", "TitleLabel", "TitleSmLabel", "SubtitleLabel",
