@@ -15,6 +15,13 @@ except Exception:
 
 @unittest.skipUnless(HAVE_KIVY, "kivy not installed")
 class TestTheme(unittest.TestCase):
+    def setUp(self):
+        # Reset module-global theme state (other tests call register_styles/set_theme).
+        from kivyshell.uikit import theme as t
+        t._registered_styles = None
+        t._styles_cache = None
+        t.set_theme(t.DEFAULT_THEME)
+
     def test_override_and_activate(self):
         from kivyshell.uikit import Theme, get_theme, set_theme
         t = Theme(button=(1, 0, 0, 1), background_image="bg.jpg")
