@@ -43,6 +43,20 @@ class TestTheme(unittest.TestCase):
         self.assertAlmostEqual(styles["title"]["height"], dp(35))
         self.assertEqual(styles["title"]["color"], DEFAULT_THEME.text_dark)
 
+    def test_build_styles_covers_shell_screen_keys(self):
+        from kivyshell.uikit import DEFAULT_THEME, build_styles
+        keys = set(build_styles(DEFAULT_THEME))
+        required = {
+            "default", "title", "title_lg", "title_md", "title_sm", "subtitle", "caption",
+            "clock", "month", "day", "table_header", "table_cell", "rating_cell", "icon_label",
+            "status_label", "button_row", "selection_row", "popup_content", "top_spacer",
+            "header_bar", "list_layout", "logbook_row", "date_separator", "table_header_row",
+            "status_area", "timer_area", "spacer_sm", "nav_btn", "days_header", "calendar_grid",
+            "cell", "selection_btn", "small_centered_btn", "tall_btn", "back_btn", "link_btn",
+            "qr_image", "url_input", "code_input",
+        }
+        self.assertTrue(required <= keys, f"build_styles missing shell keys: {sorted(required - keys)}")
+
     def test_styles_cache_invalidated_on_set_theme(self):
         from kivyshell.uikit import Theme, get_styles, set_theme
         set_theme(Theme())

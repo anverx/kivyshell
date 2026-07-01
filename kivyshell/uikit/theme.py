@@ -130,25 +130,64 @@ def get_styles() -> dict:
 
 
 def build_styles(theme: Theme) -> dict:
-    """Build the CSS-like STYLES dict from a theme. dp-scales size fields.
+    """Build the full CSS-like STYLES dict from a theme (dp-scales size fields).
 
-    This is the generic scaffold ported from yaque's ui_constants.STYLES; the
-    full set of game-screen styles migrates here during the extraction phases.
+    Complete set used by the uikit widgets and shell screens, so an app only needs
+    to supply a Theme (no register_styles). Dimensions are raw numbers here and
+    dp-scaled at the end. Game-screen-specific styles are not included; a game that
+    needs extra keys can add them via register_styles(get_styles() | {...}).
     """
+    td, tl, tm, th, tw = theme.text_dark, theme.text_light, theme.text_medium, theme.text_header, theme.text_white
     styles = {
-        "default": {"color": theme.text_dark},
-        "title_lg": {"font_size": "24sp", "color": theme.text_dark, "size_hint_y": None, "height": 40},
-        "title_md": {"font_size": "20sp", "color": theme.text_dark, "size_hint_y": None, "height": 40},
-        "title": {"font_size": "18sp", "color": theme.text_dark, "size_hint_y": None, "height": 35},
-        "title_sm": {"font_size": "16sp", "color": theme.text_dark, "size_hint_y": None, "height": 22},
-        "subtitle": {"font_size": "14sp", "color": theme.text_light, "size_hint_y": None, "height": 25},
-        "caption": {"font_size": "12sp", "color": theme.text_medium},
+        "default": {"color": td},
+        # Labels
+        "title_lg": {"font_size": "24sp", "color": td, "size_hint_y": None, "height": 40},
+        "title_md": {"font_size": "20sp", "color": td, "size_hint_y": None, "height": 40},
+        "title": {"font_size": "18sp", "color": td, "size_hint_y": None, "height": 35},
+        "title_sm": {"font_size": "16sp", "color": td, "size_hint_y": None, "height": 22},
+        "subtitle": {"font_size": "14sp", "color": tl, "size_hint_y": None, "height": 25},
+        "caption": {"font_size": "12sp", "color": tm},
+        "clock": {"font_size": "36sp", "color": (0, 0, 0, 1)},
+        "month": {"font_size": "22sp", "color": th},
+        "day": {"font_size": "14sp"},
+        "table_header": {"font_size": "11sp", "color": tw, "halign": "center"},
+        "table_cell": {"font_size": "13sp", "color": td, "halign": "center"},
+        "rating_cell": {"font_size": "13sp", "color": (1, 0.8, 0, 1), "halign": "center", "markup": True},
+        "icon_label": {"font_size": "9sp", "color": tm},
+        "status_label": {"font_size": "16sp", "halign": "center", "valign": "middle", "size_hint_y": None, "height": 45},
+        # Rows / layouts
         "button_row": {"size_hint_y": None, "height": BUTTON_HEIGHT["md"], "spacing": SPACING["lg"]},
-        "popup_content": {"orientation": "vertical",
-                          "padding": [SPACING["xl"], SPACING["lg"]], "spacing": SPACING["lg"]},
-        "logbook_row": {"size_hint_y": None, "height": ROW_HEIGHT,
-                        "padding": [SPACING["lg"], SPACING["sm"]], "spacing": SPACING["md"]},
+        "selection_row": {"size_hint_y": None, "height": BUTTON_HEIGHT["sm"], "spacing": SPACING["md"]},
+        "popup_content": {"orientation": "vertical", "padding": [SPACING["xl"], SPACING["lg"]], "spacing": SPACING["lg"]},
+        "top_spacer": {"size_hint_y": None, "height": TOP_SPACER_HEIGHT},
+        "header_bar": {"size_hint_y": None, "height": 50, "spacing": SPACING["lg"]},
+        "list_layout": {"orientation": "vertical", "size_hint_y": None, "spacing": SPACING["xs"], "padding": [0, 5]},
+        "logbook_row": {"size_hint_y": None, "height": ROW_HEIGHT, "padding": [SPACING["lg"], SPACING["sm"]], "spacing": SPACING["md"]},
+        "date_separator": {"size_hint_y": None, "height": 22, "padding": [SPACING["lg"], SPACING["sm"]]},
+        "table_header_row": {"size_hint_y": None, "height": 20, "padding": [SPACING["lg"], 0], "spacing": SPACING["md"]},
+        "status_area": {"size_hint_y": None, "height": 22},
+        "timer_area": {"size_hint_y": None, "height": 18},
+        "spacer_sm": {"size_hint_y": None, "height": 5},
+        # Calendar
+        "nav_btn": {"size_hint_x": None, "width": 50},
+        "days_header": {"cols": 7, "size_hint_y": None, "height": 30, "spacing": SPACING["xs"]},
+        "calendar_grid": {"cols": 7, "size_hint_y": None, "spacing": SPACING["sm"]},
         "cell": {"size_hint_y": None, "height": CELL_HEIGHT},
+        # Buttons
+        "selection_btn": {"font_size": "14sp"},
+        "small_centered_btn": {"size_hint": (None, None), "width": 100, "height": BUTTON_HEIGHT["sm"], "pos_hint": {"center_x": 0.5}},
+        "tall_btn": {"height": BUTTON_HEIGHT["lg"], "line_height": 0.6},
+        "back_btn": {"font_size": "18sp"},
+        "link_btn": {"font_size": "12sp", "size_hint_y": None, "height": 30, "background_color": (0, 0, 0, 0), "color": theme.link},
+        # Inputs / popups
+        "qr_image": {"size_hint_y": None, "height": 180},
+        "url_input": {"font_size": "11sp", "size_hint_y": None, "height": BUTTON_HEIGHT["sm"],
+                      "padding": [SPACING["md"], SPACING["lg"]], "readonly": True, "multiline": False,
+                      "background_color": theme.input_bg, "foreground_color": td},
+        "code_input": {"font_size": "16sp", "size_hint_y": None, "height": BUTTON_HEIGHT["md"],
+                       "padding": [SPACING["lg"], SPACING["xl"]], "multiline": False,
+                       "background_color": theme.input_bg, "foreground_color": th,
+                       "cursor_color": td, "hint_text_color": (0.6, 0.6, 0.6, 1)},
     }
     for style in styles.values():
         for key in ("height", "width", "spacing"):
