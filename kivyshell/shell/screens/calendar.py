@@ -50,8 +50,6 @@ class CalendarConfig:
 class CalendarScreen(BackgroundedScreen):
     """Subclass and implement calendar_config()."""
 
-    _badge_texture: Any = None
-
     def calendar_config(self) -> CalendarConfig:
         raise NotImplementedError
 
@@ -118,8 +116,9 @@ class CalendarScreen(BackgroundedScreen):
     def _draw_month_badge(self, color: tuple[float, ...]) -> None:
         from kivy.core.image import Image as CoreImage
         from kivy.graphics import Color, PopMatrix, PushMatrix, Rectangle, Rotate
-        if CalendarScreen._badge_texture is None:
-            CalendarScreen._badge_texture = CoreImage(get_theme().badge_icon).texture
+        # Load per-draw (called once per calendar refresh) so a theme change is
+        # honored, rather than caching the first theme's badge icon on the class.
+        texture = CoreImage(get_theme().badge_icon).texture
         lbl = self.month_label
         icon_size = lbl.height * 0.45
         ix = lbl.right - icon_size - dp(4)
@@ -128,7 +127,7 @@ class CalendarScreen(BackgroundedScreen):
             Color(*color)
             PushMatrix()
             Rotate(angle=-20, origin=(ix + icon_size / 2, iy + icon_size / 2))
-            Rectangle(texture=CalendarScreen._badge_texture, pos=(ix, iy), size=(icon_size, icon_size))
+            Rectangle(texture=texture, pos=(ix, iy), size=(icon_size, icon_size))
             PopMatrix()
 
     def refresh_calendar(self) -> None:

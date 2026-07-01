@@ -101,8 +101,14 @@ class LoadingPopup(ModalView):
 
 
 def share_popup(share_url: str, code: str, title: str = "Share") -> None:
-    """QR code + copy-URL / copy-code dialog for any shareable URL + code."""
-    import qrcode
+    """QR code + copy-URL / copy-code dialog for any shareable URL + code.
+
+    Requires the optional `qrcode` extra: pip install 'kivyshell[qr]'.
+    """
+    try:
+        import qrcode
+    except ImportError as exc:
+        raise RuntimeError("share_popup requires qrcode; install with: pip install 'kivyshell[qr]'") from exc
 
     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=2)
     qr.add_data(share_url)

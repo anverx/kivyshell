@@ -115,36 +115,36 @@ class CompletionBadge:
     Icon and color come from the theme (`badge_icon`, `badge_on_time`). yaque uses
     a gold crown; yawop can point `badge_icon` at a stylized 'W'."""
 
-    _texture: Any = None
-
     def __init__(self, btn: RoundedButton, visible: bool = False) -> None:
         self.btn = btn
         self.visible = visible
-        if CompletionBadge._texture is None:
-            CompletionBadge._texture = CoreImage(get_theme().badge_icon).texture
+        # Instance-level texture so a later set_theme (dark mode, yawop's W badge,
+        # tests) is honored; drawn to canvas.after so the button's own
+        # canvas.before bg redraw can't clobber it (no callback-order dependency).
+        self._texture = CoreImage(get_theme().badge_icon).texture
         btn.bind(pos=self._draw, size=self._draw, state=self._draw)
 
     def show(self) -> None:
         self.visible = True
-        self.btn._update_bg()
         self._draw()
 
     def hide(self) -> None:
         self.visible = False
-        self.btn._update_bg()
+        self.btn.canvas.after.clear()
 
     def _draw(self, *args: Any) -> None:
+        self.btn.canvas.after.clear()
         if not self.visible:
             return
         btn = self.btn
-        with btn.canvas.before:
+        with btn.canvas.after:
             Color(*get_theme().badge_on_time)
             icon_size = btn.height * 0.4
             ix = btn.right - icon_size - dp(4)
             iy = btn.top - icon_size - dp(2)
             PushMatrix()
             Rotate(angle=-20, origin=(ix + icon_size / 2, iy + icon_size / 2))
-            Rectangle(texture=CompletionBadge._texture, pos=(ix, iy), size=(icon_size, icon_size))
+            Rectangle(texture=self._texture, pos=(ix, iy), size=(icon_size, icon_size))
             PopMatrix()
 
 

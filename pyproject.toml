@@ -13,6 +13,7 @@ authors = [{ name = "Anatoli Verkhovski" }]
 
 [project.optional-dependencies]
 dev = ["ruff"]
+qr = ["qrcode[pil]>=7.0"]  # only needed for share_popup()
 
 [tool.setuptools.packages.find]
 include = ["kivyshell*"]
