@@ -76,6 +76,7 @@ class Theme:
 DEFAULT_THEME = Theme()
 _active: Theme = DEFAULT_THEME
 _styles_cache: dict | None = None
+_registered_styles: dict | None = None
 
 
 def set_theme(theme: Theme) -> None:
@@ -89,9 +90,23 @@ def get_theme() -> Theme:
     return _active
 
 
+def register_styles(styles: dict) -> None:
+    """Use an app-supplied STYLES dict verbatim instead of the built-in scaffold.
+
+    Lets an existing app (yaque) hand its already-tuned, dp-scaled STYLES to the
+    shared primitives so rendering is unchanged during migration. New apps can
+    skip this and rely on build_styles(theme).
+    """
+    global _registered_styles
+    _registered_styles = styles
+
+
 def get_styles() -> dict:
-    """Return the dp-scaled STYLES dict for the active theme (cached)."""
+    """Active STYLES: the registered dict if an app supplied one, else built
+    (and cached) from the active theme."""
     global _styles_cache
+    if _registered_styles is not None:
+        return _registered_styles
     if _styles_cache is None:
         _styles_cache = build_styles(_active)
     return _styles_cache
