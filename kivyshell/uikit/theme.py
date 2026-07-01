@@ -21,6 +21,16 @@ RADIUS = {"sm": 8, "md": 12}
 BUTTON_HEIGHT = {"sm": 40, "md": 48, "lg": 58}
 ROW_HEIGHT = 36
 CELL_HEIGHT = 52
+STAT_ROW_HEIGHT = 24
+ICON_BTN_SIZE = 40
+ICON_LABEL_HEIGHT = 12
+ICON_LABEL_TOTAL = 14  # icon label height + padding
+POPUP_WIDTH = 0.85          # default popup size_hint_x
+POPUP_WIDTH_NARROW = 0.78
+SPINNER_LINE_WIDTH = 2
+TOP_SPACER_HEIGHT = 70
+PADDING_CELL = (2, 2)
+SWIPE_DISTANCE_THRESHOLD = 100
 
 
 @dataclass(frozen=True)
@@ -29,6 +39,7 @@ class Theme:
 
     # Fonts
     font_name: str = "Roboto"
+    button_font_size: str = "22sp"
 
     # Text colors
     text_dark: tuple = (0.3, 0.3, 0.3, 1)
@@ -56,14 +67,20 @@ class Theme:
     status_success: tuple = (0.2, 0.6, 0.2, 1)
     status_error: tuple = (0.8, 0.2, 0.2, 1)
     link: tuple = (0.2, 0.5, 0.8, 1)
+    spinner_border: tuple = (0.8, 0.8, 0.8, 1)
 
     # Completion badges (calendar cells + menu). yaque = gold/silver crowns.
     badge_on_time: tuple = (1.0, 0.84, 0.0, 1)
     badge_late: tuple = (0.85, 0.88, 0.95, 1)
     badge_none: tuple = (0.5, 0.5, 0.5, 0.3)
 
+    # Calendar day highlights
+    calendar_today: tuple = (0.4, 0.7, 0.9, 1)
+    calendar_protected: tuple = (0.85, 0.65, 0.3, 1)
+
     # Assets (paths, app-relative)
     background_image: str = ""
+    icons_dir: str = ""    # directory of named icon PNGs used by IconButton
     loader_icon: str = ""  # was yaque's spinning queen.png
     badge_icon: str = ""   # was yaque's crown / queen-small.png
 
@@ -76,6 +93,7 @@ class Theme:
 DEFAULT_THEME = Theme()
 _active: Theme = DEFAULT_THEME
 _styles_cache: dict | None = None
+_registered_styles: dict | None = None
 
 
 def set_theme(theme: Theme) -> None:
@@ -89,9 +107,23 @@ def get_theme() -> Theme:
     return _active
 
 
+def register_styles(styles: dict) -> None:
+    """Use an app-supplied STYLES dict verbatim instead of the built-in scaffold.
+
+    Lets an existing app (yaque) hand its already-tuned, dp-scaled STYLES to the
+    shared primitives so rendering is unchanged during migration. New apps can
+    skip this and rely on build_styles(theme).
+    """
+    global _registered_styles
+    _registered_styles = styles
+
+
 def get_styles() -> dict:
-    """Return the dp-scaled STYLES dict for the active theme (cached)."""
+    """Active STYLES: the registered dict if an app supplied one, else built
+    (and cached) from the active theme."""
     global _styles_cache
+    if _registered_styles is not None:
+        return _registered_styles
     if _styles_cache is None:
         _styles_cache = build_styles(_active)
     return _styles_cache

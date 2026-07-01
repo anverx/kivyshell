@@ -28,10 +28,14 @@ class Completion(Enum):
     LATE = "late"         # solved on a later date
 
 
-@dataclass(frozen=True)
+@dataclass
 class Variant:
     """A selectable puzzle variant shown on the menu / calendar (e.g. a board
-    size, or a word pack+difficulty)."""
+    size, or a word pack+difficulty).
+
+    Not frozen: a frozen dataclass auto-generates __hash__ that hashes every
+    field, and the mutable `meta` dict would make hash(variant) raise.
+    """
     id: str
     label: str
     meta: dict = field(default_factory=dict)
