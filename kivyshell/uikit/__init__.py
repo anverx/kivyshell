@@ -1,5 +1,6 @@
 """L1: pure Kivy UI primitives + theme (requires kivy)."""
 
+from .charts import BarChart
 from .buttons import (
     BackButton,
     ColorTuple,
@@ -75,9 +76,9 @@ __all__ = [
     # layouts
     "PopupContent", "styled_layout", "ButtonRow", "SizeButtonRow", "PanelLayout", "StatRow",
     "DateSeparator", "Popup", "TypeIcon", "CompletionIcon", "CrownIcon",
-    # inputs / spinner / popups
+    # inputs / spinner / popups / charts
     "UrlInput", "CodeInput", "LoaderSpinner", "QueenSpinner",
-    "LoadingPopup", "share_popup", "load_code_popup",
+    "LoadingPopup", "share_popup", "load_code_popup", "BarChart",
     # labels + factory
     "styled", "styled_label", "StyledLabel",
     "TitleLgLabel", "TitleMdLabel", "TitleLabel", "TitleSmLabel", "SubtitleLabel",
