@@ -2,6 +2,7 @@
 so the shell's pure pieces (adapter/storage/streak) stay kivy-free."""
 
 from .base import BackgroundedScreen
+from .menu import MenuConfig, MenuScreen
 from .splash import SplashScreen
 
-__all__ = ["BackgroundedScreen", "SplashScreen"]
+__all__ = ["BackgroundedScreen", "SplashScreen", "MenuScreen", "MenuConfig"]
