@@ -25,7 +25,9 @@ STAT_ROW_HEIGHT = 24
 ICON_BTN_SIZE = 40
 ICON_LABEL_HEIGHT = 12
 ICON_LABEL_TOTAL = 14  # icon label height + padding
-POPUP_WIDTH = 0.85     # default popup size_hint_x
+POPUP_WIDTH = 0.85          # default popup size_hint_x
+POPUP_WIDTH_NARROW = 0.78
+SPINNER_LINE_WIDTH = 2
 
 
 @dataclass(frozen=True)
@@ -62,6 +64,7 @@ class Theme:
     status_success: tuple = (0.2, 0.6, 0.2, 1)
     status_error: tuple = (0.8, 0.2, 0.2, 1)
     link: tuple = (0.2, 0.5, 0.8, 1)
+    spinner_border: tuple = (0.8, 0.8, 0.8, 1)
 
     # Completion badges (calendar cells + menu). yaque = gold/silver crowns.
     badge_on_time: tuple = (1.0, 0.84, 0.0, 1)
