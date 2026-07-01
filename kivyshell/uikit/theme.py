@@ -28,6 +28,9 @@ ICON_LABEL_TOTAL = 14  # icon label height + padding
 POPUP_WIDTH = 0.85          # default popup size_hint_x
 POPUP_WIDTH_NARROW = 0.78
 SPINNER_LINE_WIDTH = 2
+TOP_SPACER_HEIGHT = 70
+PADDING_CELL = (2, 2)
+SWIPE_DISTANCE_THRESHOLD = 100
 
 
 @dataclass(frozen=True)
@@ -70,6 +73,10 @@ class Theme:
     badge_on_time: tuple = (1.0, 0.84, 0.0, 1)
     badge_late: tuple = (0.85, 0.88, 0.95, 1)
     badge_none: tuple = (0.5, 0.5, 0.5, 0.3)
+
+    # Calendar day highlights
+    calendar_today: tuple = (0.4, 0.7, 0.9, 1)
+    calendar_protected: tuple = (0.85, 0.65, 0.3, 1)
 
     # Assets (paths, app-relative)
     background_image: str = ""
