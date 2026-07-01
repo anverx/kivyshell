@@ -8,4 +8,4 @@ The shell's non-UI pieces (adapter contracts, SQLite storage, streak) are
 importable without kivy; only uikit and the screens pull kivy in.
 """
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
