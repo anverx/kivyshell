@@ -1,5 +1,21 @@
 """L1: pure Kivy UI primitives + theme (requires kivy)."""
 
+from .buttons import (
+    BackButton,
+    ColorTuple,
+    CrownBadge,
+    FixedGrayRoundedButton,
+    FixedRoundedButton,
+    GrayRoundedButton,
+    IconButton,
+    LinkButton,
+    RoundedButton,
+    SelectableButton,
+    SelectableButtonGroup,
+    SmallRoundedButton,
+    TallRoundedButton,
+    disable_widget,
+)
 from .labels import (
     AboutSubtitleLabel,
     AboutTitleLabel,
@@ -34,6 +50,10 @@ from .theme import (
 __all__ = [
     # theme
     "Theme", "DEFAULT_THEME", "set_theme", "get_theme", "get_styles", "build_styles", "register_styles",
+    # buttons
+    "ColorTuple", "RoundedButton", "GrayRoundedButton", "FixedRoundedButton", "TallRoundedButton",
+    "FixedGrayRoundedButton", "SmallRoundedButton", "BackButton", "LinkButton", "CrownBadge",
+    "SelectableButton", "SelectableButtonGroup", "IconButton", "disable_widget",
     # labels + factory
     "styled", "styled_label", "StyledLabel",
     "TitleLgLabel", "TitleMdLabel", "TitleLabel", "TitleSmLabel", "SubtitleLabel",

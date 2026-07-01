@@ -21,6 +21,9 @@ RADIUS = {"sm": 8, "md": 12}
 BUTTON_HEIGHT = {"sm": 40, "md": 48, "lg": 58}
 ROW_HEIGHT = 36
 CELL_HEIGHT = 52
+ICON_BTN_SIZE = 40
+ICON_LABEL_HEIGHT = 12
+ICON_LABEL_TOTAL = 14  # icon label height + padding
 
 
 @dataclass(frozen=True)
@@ -29,6 +32,7 @@ class Theme:
 
     # Fonts
     font_name: str = "Roboto"
+    button_font_size: str = "22sp"
 
     # Text colors
     text_dark: tuple = (0.3, 0.3, 0.3, 1)
@@ -64,6 +68,7 @@ class Theme:
 
     # Assets (paths, app-relative)
     background_image: str = ""
+    icons_dir: str = ""    # directory of named icon PNGs used by IconButton
     loader_icon: str = ""  # was yaque's spinning queen.png
     badge_icon: str = ""   # was yaque's crown / queen-small.png
 
