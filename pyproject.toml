@@ -7,6 +7,8 @@ name = "kivyshell"
 version = "0.1.3"
 description = "Reusable Kivy UI primitives (uikit) and a daily-puzzle app shell (menu/calendar/activity), shared by yaque and yawop."
 readme = "README.md"
+license = { text = "MIT" }
+classifiers = ["License :: OSI Approved :: MIT License"]
 requires-python = ">=3.11"
 dependencies = ["kivy>=2.3"]
 authors = [{ name = "Anatoli Verkhovski" }]
