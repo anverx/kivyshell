@@ -28,7 +28,23 @@ __all__ = [
 
 
 def PopupContent(**kwargs: Any) -> BoxLayout:
-    return styled(BoxLayout, "popup_content", **kwargs)
+    """Popup body on a solid, theme-colored rounded card.
+
+    The bare ModalView panel renders as a translucent dark slab, which leaves the
+    dark text unreadable, so we paint an opaque card (theme.popup_bg) behind the
+    content. Theme-driven: a future dark theme just sets popup_bg dark + light text.
+    """
+    box = styled(BoxLayout, "popup_content", **kwargs)
+
+    def _draw_card(*_a: Any) -> None:
+        box.canvas.before.clear()
+        with box.canvas.before:
+            Color(*get_theme().popup_bg[:3], 1)  # opaque: no dark bleed-through
+            RoundedRectangle(pos=box.pos, size=box.size, radius=[dp(RADIUS["md"])])
+
+    box.bind(pos=_draw_card, size=_draw_card)
+    _draw_card()
+    return box
 
 
 def styled_layout(style: str = "button_row", **overrides: Any) -> BoxLayout:
