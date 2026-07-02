@@ -51,6 +51,7 @@ class PlayRecord:
     completed_at: str | None
     duration_ms: int | None
     completed: bool
+    attempts: int | None = None   # tries taken (e.g. guesses); None if not tracked
     rating: int | None = None
 
 

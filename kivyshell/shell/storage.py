@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS plays (
     completed_at TEXT,
     duration_ms INTEGER,
     completed INTEGER NOT NULL DEFAULT 0,
+    attempts INTEGER,
     rating INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_plays_challenge ON plays(challenge_id);
@@ -79,12 +80,19 @@ class SqliteStore:
         self._db.commit()
         return cur.lastrowid
 
-    def complete_play(self, play_id, duration_ms) -> None:
+    def finish_play(self, play_id, won: bool, duration_ms=None, attempts=None) -> None:
+        """Finalize a play, win or lose. `completed` = solved; `completed_at` is set
+        either way so finished (incl. lost) games are distinguishable from abandoned
+        ones. `attempts` = number of tries (e.g. guesses)."""
         self._db.execute(
-            "UPDATE plays SET completed=1, completed_at=?, duration_ms=? WHERE id=?",
-            (datetime.now().isoformat(), duration_ms, play_id),
+            "UPDATE plays SET completed=?, completed_at=?, duration_ms=?, attempts=? WHERE id=?",
+            (1 if won else 0, datetime.now().isoformat(), duration_ms, attempts, play_id),
         )
         self._db.commit()
+
+    def complete_play(self, play_id, duration_ms, attempts=None) -> None:
+        """Record a solved play (back-compat convenience over finish_play)."""
+        self.finish_play(play_id, True, duration_ms, attempts)
 
     def rate_play(self, play_id, rating) -> None:
         self._db.execute("UPDATE plays SET rating=? WHERE id=?", (rating, play_id))
@@ -136,7 +144,7 @@ class SqliteStore:
                  "rating": "p.rating DESC"}.get(sort_by, "p.started_at DESC")
         rows = self._db.execute(
             f"""SELECT c.variant_id, c.date, c.code, p.started_at, p.completed_at,
-                       p.duration_ms, p.completed, p.rating
+                       p.duration_ms, p.completed, p.attempts, p.rating
                 FROM plays p JOIN challenges c ON c.id=p.challenge_id
                 ORDER BY {order} LIMIT ? OFFSET ?""",
             (limit, offset),
@@ -144,18 +152,20 @@ class SqliteStore:
         return [PlayRecord(variant_id=r["variant_id"], date=r["date"], code=r["code"],
                            started_at=r["started_at"], completed_at=r["completed_at"],
                            duration_ms=r["duration_ms"], completed=bool(r["completed"]),
-                           rating=r["rating"]) for r in rows]
+                           attempts=r["attempts"], rating=r["rating"]) for r in rows]
 
     def stats(self) -> dict:
         row = self._db.execute(
             """SELECT COUNT(*) AS plays, SUM(completed) AS completed,
                       AVG(CASE WHEN completed=1 THEN duration_ms END) AS avg_ms,
-                      SUM(CASE WHEN completed=1 THEN duration_ms ELSE 0 END) AS total_ms
-               FROM plays""",
+                      SUM(CASE WHEN completed=1 THEN duration_ms ELSE 0 END) AS total_ms,
+                      AVG(CASE WHEN completed=1 THEN attempts END) AS avg_attempts
+               FROM plays WHERE completed_at IS NOT NULL""",
         ).fetchone()
         return {"plays": row["plays"] or 0, "completed": row["completed"] or 0,
                 "avg_ms": int(row["avg_ms"]) if row["avg_ms"] else None,
-                "total_ms": row["total_ms"] or 0}
+                "total_ms": row["total_ms"] or 0,
+                "avg_attempts": round(row["avg_attempts"], 1) if row["avg_attempts"] else None}
 
     def _played_dates(self) -> set[str]:
         """Dates whose daily puzzle was completed on that same date (for streaks)."""

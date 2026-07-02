@@ -81,6 +81,24 @@ class TestSqliteStore(unittest.TestCase):
         self.assertEqual(st["completed"], 1)
         self.assertEqual(st["total_ms"], 1500)
 
+    def test_finish_play_records_loss_and_attempts(self):
+        cid = self.s.record_challenge("v6", None, "c-loss")
+        pid = self.s.start_play(cid)
+        self.s.finish_play(pid, won=False, duration_ms=5000, attempts=6)
+        p = self.s.all_plays()[0]
+        self.assertEqual(p.attempts, 6)
+        self.assertFalse(p.completed)              # lost
+        self.assertIsNotNone(p.completed_at)       # finished, not abandoned
+
+    def test_complete_play_records_attempts(self):
+        cid = self.s.record_challenge("v6", None, "c-win")
+        pid = self.s.start_play(cid)
+        self.s.complete_play(pid, 3000, attempts=3)
+        p = self.s.all_plays()[0]
+        self.assertTrue(p.completed)
+        self.assertEqual(p.attempts, 3)
+        self.assertEqual(self.s.stats()["avg_attempts"], 3.0)
+
 
 if __name__ == "__main__":
     unittest.main()
