@@ -100,5 +100,31 @@ class TestSqliteStore(unittest.TestCase):
         self.assertEqual(self.s.stats()["avg_attempts"], 3.0)
 
 
+class TestMigration(unittest.TestCase):
+    def test_open_adds_attempts_to_pre_existing_db(self):
+        import os
+        import sqlite3
+        import tempfile
+        d = tempfile.mkdtemp()
+        con = sqlite3.connect(os.path.join(d, "kivyshell.db"))
+        con.executescript(
+            "CREATE TABLE challenges(id INTEGER PRIMARY KEY AUTOINCREMENT, variant_id TEXT, "
+            "date TEXT, code TEXT UNIQUE, meta TEXT, created_at TEXT);"
+            "CREATE TABLE plays(id INTEGER PRIMARY KEY AUTOINCREMENT, challenge_id INTEGER, "
+            "started_at TEXT NOT NULL, completed_at TEXT, duration_ms INTEGER, "
+            "completed INTEGER DEFAULT 0, rating INTEGER);"  # old schema: no 'attempts'
+        )
+        con.commit()
+        con.close()
+
+        s = SqliteStore()
+        s.open(d)  # must migrate in place, not crash
+        cid = s.record_challenge("v6", None, "c")
+        pid = s.start_play(cid)
+        s.finish_play(pid, True, 1000, 4)
+        self.assertEqual(s.all_plays()[0].attempts, 4)
+        s.close()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -53,7 +53,15 @@ class SqliteStore:
         self._db = sqlite3.connect(path)
         self._db.row_factory = sqlite3.Row
         self._db.executescript(SCHEMA)
+        self._migrate()
         self._db.commit()
+
+    def _migrate(self) -> None:
+        """Add columns introduced after a DB was first created (CREATE TABLE IF NOT
+        EXISTS won't alter an existing table). Idempotent."""
+        cols = {r["name"] for r in self._db.execute("PRAGMA table_info(plays)").fetchall()}
+        if "attempts" not in cols:
+            self._db.execute("ALTER TABLE plays ADD COLUMN attempts INTEGER")
 
     def close(self) -> None:
         if self._db:
