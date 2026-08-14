@@ -40,6 +40,18 @@ class TestSqliteStore(unittest.TestCase):
         b = self.s.record_challenge("v6", "2026-07-01", "CODE1")
         self.assertEqual(a, b)
 
+    def test_record_challenge_stable_after_other_inserts(self):
+        """Re-recording an existing challenge must return its real id even after
+        other rows were inserted this session. Regression: it returned the stale
+        connection-scoped last_insert_rowid (INSERT OR IGNORE does not reset it),
+        so a re-recorded challenge yielded a plays rowid, mis-filing later plays."""
+        cid = self.s.record_challenge("v6", "2026-07-30", "daily-A")
+        self.s.start_play(cid)  # bumps the connection's last_insert_rowid
+        self.s.start_play(self.s.record_challenge("v6", "2026-07-30", "daily-B"))
+        self.assertEqual(self.s.record_challenge("v6", "2026-07-30", "daily-A"), cid,
+                         "re-recording an existing challenge must return its own id, "
+                         "not a stale rowid from a later insert")
+
     def test_completion_today_on_time_vs_none(self):
         today = date.today().isoformat()
         self._play("v6", today, "c-today")            # completed same day -> ON_TIME

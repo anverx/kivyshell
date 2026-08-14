@@ -70,13 +70,17 @@ class SqliteStore:
 
     # --- writes ---------------------------------------------------------------
     def record_challenge(self, variant_id, date, code, meta=None) -> int:
-        cur = self._db.execute(
+        self._db.execute(
             "INSERT OR IGNORE INTO challenges(variant_id, date, code, meta) VALUES (?,?,?,?)",
             (variant_id, date, code, json.dumps(meta) if meta is not None else None),
         )
         self._db.commit()
-        if cur.lastrowid:
-            return cur.lastrowid
+        # Resolve the id by the UNIQUE `code`, NOT via cur.lastrowid: SQLite's
+        # last_insert_rowid is connection-scoped and is NOT reset when INSERT OR
+        # IGNORE ignores a duplicate, so on a re-recorded (existing) challenge it
+        # returns a stale rowid (e.g. the last plays row). Trusting it filed plays
+        # under the wrong challenge_id, so an in-progress daily failed to resume and
+        # wins recorded against a phantom challenge. SELECT-by-code is authoritative.
         row = self._db.execute("SELECT id FROM challenges WHERE code=?", (code,)).fetchone()
         return row["id"]
 
