@@ -165,6 +165,16 @@ class CalendarScreen(BackgroundedScreen):
                     cell.background_color = get_theme().calendar_protected
             self.calendar_grid.add_widget(cell)
 
+    def reload_config(self) -> None:
+        """Rebind to a freshly built config + data source, then redraw. Call after the
+        host app swaps the underlying data source (e.g. a language/profile switch) so
+        the grid reflects the new source instead of the one captured at build time."""
+        if not hasattr(self, "_config"):   # build_content hasn't run yet; it will pick up the current source
+            return
+        self._config = self.calendar_config()
+        self.cal_state = self._config.new_state()
+        self.refresh_calendar()
+
     def on_enter(self) -> None:
         self.refresh_calendar()
 
